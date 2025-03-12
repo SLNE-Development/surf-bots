@@ -7,7 +7,8 @@ require("dotenv").config();
 const botAmount = 100;
 const botsPerProcess = 50;
 
-const authServer = process.env.AUTH_SERVER;
+const serverIp = process.env.SERVER_IP;
+const serverPort = process.env.SERVER_PORT;
 const sessionServer = process.env.SESSION_SERVER;
 
 const startBots = (startIndex: number, endIndex: number) => {
@@ -17,13 +18,12 @@ const startBots = (startIndex: number, endIndex: number) => {
 		const botName = `Bot_${i}`;
 
 		const bot = createBot({
-			host: "localhost",
-			port: 25565,
+			host: serverIp,
+			port: parseInt(serverPort),
 			username: botName,
 			password: "password",
 			version: "1.21.4",
-			auth: "mojang",
-			authServer: authServer,
+			auth: "offline",
 			sessionServer: sessionServer,
 		});
 
@@ -55,8 +55,13 @@ const startBots = (startIndex: number, endIndex: number) => {
 				case "swing":
 					bot.swingArm("right");
 					break;
-				case "kevin":
-					bot.chat("Kevin is a noob!");
+				case "jump":
+					bot.setControlState("jump", true);
+					setTimeout(() => bot.setControlState("jump", false), 500);
+					break;
+				case "attack":
+					const entity = bot.nearestEntity();
+					if (entity) bot.attack(entity);
 					break;
 			}
 		});
